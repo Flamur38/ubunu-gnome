@@ -38,6 +38,8 @@
       - radare2
       - snapd
       - freerdp2-x11
+      - nmp
+      - nodejs
     state: present
 
 - name: "Install Snap packages"
