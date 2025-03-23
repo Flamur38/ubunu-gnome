@@ -1,0 +1,31 @@
+- name: Create a temp directory for GNOME extensions
+  file:
+    path: "/tmp/gnome-extensions"
+    state: directory
+    mode: '0755'
+
+- name: Download GNOME extension zips
+  get_url:
+    url: "{{ item.url }}"
+    dest: "/tmp/gnome-extensions/{{ item.name }}.zip"
+    mode: '0644'
+  loop:
+    - { name: 'coverflowalttab@palatis.github.com', url: 'https://extensions.gnome.org/review/download/26358.shell-extension.zip' }
+    - { name: 'dash-to-panel@jderose9.github.com', url: 'https://extensions.gnome.org/extension-data/dash-to-paneljderose9.github.com.v56.shell-extension.zip' }
+    - { name: 'just-perfection-desktop@just-perfection', url: 'https://extensions.gnome.org/extension-data/just-perfection-desktopjust-perfection.v26.shell-extension.zip' }
+    - { name: 'space-bar@luchrioh', url: 'https://extensions.gnome.org/extension-data/space-barluchrioh.v30.shell-extension.zip' }
+    - { name: 'switcher@landau.fi', url: 'https://extensions.gnome.org/extension-data/switcherlandau.fi.v23.shell-extension.zip' }
+    - { name: 'tactile@lundal.io', url: 'https://extensions.gnome.org/extension-data/tactilelundal.io.v13.shell-extension.zip' }
+
+- name: Install GNOME Shell extensions via gnome-extensions CLI
+  become: true
+  become_user: "{{ ansible_user_id }}"
+  shell: |
+    set -e
+    cd /tmp/gnome-extensions
+    for zip in *.zip; do
+      gnome-extensions install --force "$zip"
+    done
+  args:
+    executable: /bin/bash
+

@@ -30,3 +30,4 @@
   args:
     executable: /bin/bash
 
+- import_tasks: extensions.yml
