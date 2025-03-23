@@ -38,8 +38,12 @@
       - radare2
       - snapd
       - freerdp2-x11
+<<<<<<< HEAD
       - nmp
       - nodejs
+=======
+      - npm
+>>>>>>> 8baab4d (added gnome-settings)
     state: present
 
 - name: "Install Snap packages"

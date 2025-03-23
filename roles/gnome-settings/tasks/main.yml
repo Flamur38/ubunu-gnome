@@ -25,7 +25,7 @@
   become_user: "{{ ansible_user_id }}"
   shell: |
     export DBUS_SESSION_BUS_ADDRESS="unix:path=/run/user/$(id -u {{ ansible_user_id }})/bus"
-    gsettings set org.gnome.desktop.background picture-uri "file:///home/{{ ansible_user_id }}/Pictures/cyber_girl.jpg"
+    gsettings set org.gnome.desktop.background picture-uri "file:///home/{{ ansible_user_id }}/Pictures/skyline.jpg"
     gsettings set org.gnome.desktop.background picture-options "zoom"
   args:
     executable: /bin/bash

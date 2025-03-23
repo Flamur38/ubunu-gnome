@@ -1,6 +1,60 @@
+- name: Add Mozilla Team PPA for firefox-esr
+  apt_repository:
+    repo: ppa:mozillateam/ppa
+    state: present
+  become: true
+
+- name: Set default priority for firefox-esr from Mozilla PPA
+  copy:
+    dest: /etc/apt/preferences.d/mozilla-firefox
+    content: |
+      Package: *
+      Pin: release o=LP-PPA-mozillateam
+      Pin-Priority: 1001
+    mode: '0644'
+  become: true
+
+- name: Ensure apt cache is updated
+  apt:
+    update_cache: yes
+  become: true
+
+- name: Remove Snap version of Firefox (if exists)
+  shell: |
+    snap remove firefox || true
+  ignore_errors: true
+  become: true
+
+- name: Remove regular Firefox if installed
+  apt:
+    name: firefox
+    state: absent
+    purge: yes
+  become: true
+
+- name: Auto remove unused dependencies
+  apt:
+    autoremove: yes
+  become: true
+
+- name: Ensure firefox-esr is installed
+  apt:
+    name: firefox-esr
+    state: present
+  become: true
+
+- name: Make firefox-esr the default by symlinking to /usr/bin/firefox
+  file:
+    src: /usr/bin/firefox-esr
+    dest: /usr/bin/firefox
+    state: link
+    force: true
+  become: true
+
+# Existing task continues from here
 - name: Ensure Firefox distribution directory exists
   file:
-    path: "/usr/lib/firefox/distribution"
+    path: "/usr/lib/firefox-esr/distribution"
     state: directory
     mode: '0755'
   become: true
@@ -8,6 +62,7 @@
 - name: "Updating Firefox Policies"
   template:
     src: "templates/policies.json.j2"
-    dest: "/usr/lib/firefox/distribution/policies.json"
+    dest: "/usr/lib/firefox-esr/distribution/policies.json"
+    mode: '0644'
   become: true
 
