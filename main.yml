@@ -1,0 +1,10 @@
+# kali-build/main.yml
+- name: "Customizing Ubuntu"
+  hosts: localhost
+  connection: local
+  roles:
+    - role: "tools-installation"
+    - role: "terminal-setup"
+    - role: "browser-settings"
+#     - role: "logging-setup"
+

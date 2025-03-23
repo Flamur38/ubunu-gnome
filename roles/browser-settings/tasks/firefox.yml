@@ -1,0 +1,13 @@
+- name: Ensure Firefox distribution directory exists
+  file:
+    path: "/usr/lib/firefox/distribution"
+    state: directory
+    mode: '0755'
+  become: true
+
+- name: "Updating Firefox Policies"
+  template:
+    src: "templates/policies.json.j2"
+    dest: "/usr/lib/firefox/distribution/policies.json"
+  become: true
+

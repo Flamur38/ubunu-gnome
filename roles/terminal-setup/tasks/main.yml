@@ -1,0 +1,58 @@
+---
+# 2. Copy .tmux.conf 
+- name: Copy custom tmux configuration
+  copy:
+    src: "{{ role_path }}/files/.tmux.conf"
+    dest: "{{ ansible_user_dir }}"
+
+# 3. Copy custom bash configuration
+- name: Copy custom bash configuration
+  copy:
+    src: "{{ role_path }}/files/.bashrc"
+    dest: "{{ ansible_user_dir }}"
+    mode: '0644'
+
+# 4. Ensure the terminator config directory exists
+- name: Ensure terminator config directory exists
+  file:
+    path: "{{ ansible_user_dir }}/.config/terminator"
+    state: directory
+    mode: '0755'
+
+# 5. Copy the kali-logo.png image to the terminator config directory
+- name: Copy kali-logo.png to the terminator config directory
+  copy:
+    src: "{{ role_path }}/files/charging3.png"
+    dest: "{{ ansible_user_dir }}/Pictures"
+    mode: '0644'
+
+# 6. Copy the updated Terminator config file with the correct background image
+- name: Copy terminator_config with background image
+  copy:
+    src: "{{ role_path }}/files/terminator_config"
+    dest: "{{ ansible_user_dir }}/.config/terminator/config"
+    mode: '0644'
+
+# 10. Copy tree.sh to /usr/local/bin
+- name: Copy tree.sh to /usr/local/bin
+  copy:
+    src: "{{ role_path }}/files/tree.sh"
+    dest: "/usr/local/bin/tree.sh"
+    mode: '0755' # Make it executable
+  become: true   # Run as sudo
+
+# 12. Install TPM and tmux plugins
+- name: Install TPM and tmux plugins
+  block:
+    - name: Clone TPM (Tmux Plugin Manager)
+      git:
+        repo: 'https://github.com/tmux-plugins/tpm'
+        dest: "{{ ansible_user_dir }}/.tmux/plugins/tpm"
+      become: false
+
+    - name: Install tmux plugins using TPM
+      shell: |
+        tmux source-file ~/.tmux.conf
+        tmux run-shell ~/.tmux/plugins/tpm/tpm
+      become: false
+

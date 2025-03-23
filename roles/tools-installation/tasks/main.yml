@@ -1,0 +1,51 @@
+---
+- name: "Install essential tools"
+  become: yes
+  become_method: sudo
+  package:
+    name:
+      - neovim
+      - tmux
+      - curl
+      - terminator
+      - nmap
+      - nikto
+      - sqlmap
+      - python3
+      - python3-pip
+      - git
+      - jq
+      - netcat-openbsd
+      - wireshark
+      - tcpdump
+      - htop
+      - zsh
+      - bat
+      - dirb
+      - gobuster
+      - hydra
+      - john
+      - aircrack-ng
+      - hashcat
+      - dnsutils
+      - smbclient
+      - whois
+      - wfuzz
+      - rdesktop
+      - steghide
+      - binwalk
+      - foremost
+      - radare2
+      - snapd
+      - freerdp2-x11
+    state: present
+
+- name: "Install Snap packages"
+  become: yes
+  become_method: sudo
+  community.general.snap:
+    name:
+      - enum4linux
+      - seclists
+      - searchsploit
+    state: present

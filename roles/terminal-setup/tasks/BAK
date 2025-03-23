@@ -1,0 +1,88 @@
+---
+# 1. Install Packer for Neovim
+- name: Install Packer for Neovim
+  git:
+    repo: 'https://github.com/wbthomason/packer.nvim'
+    dest: "{{ ansible_user_dir }}/.local/share/nvim/site/pack/packer/start/packer.nvim"
+    clone: yes
+    update: yes
+
+# 2. Copy .tmux.conf 
+- name: Copy custom tmux configuration
+  copy:
+    src: "{{ role_path }}/files/.tmux.conf"
+    dest: "{{ ansible_user_dir }}"
+
+# 3. Copy custom bash configuration
+- name: Copy custom bash configuration
+  copy:
+    src: "{{ role_path }}/files/.bashrc"
+    dest: "{{ ansible_user_dir }}"
+    mode: '0644'
+
+# 4. Ensure the terminator config directory exists
+- name: Ensure terminator config directory exists
+  file:
+    path: "{{ ansible_user_dir }}/.config/terminator"
+    state: directory
+    mode: '0755'
+
+# 5. Copy the kali-logo.png image to the terminator config directory
+- name: Copy kali-logo.png to the terminator config directory
+  copy:
+    src: "{{ role_path }}/files/kali-logo.png"
+    dest: "{{ ansible_user_dir }}/Pictures"
+    mode: '0644'
+
+# 6. Copy the updated Terminator config file with the correct background image
+- name: Copy terminator_config with background image
+  copy:
+    src: "{{ role_path }}/files/terminator_config"
+    dest: "{{ ansible_user_dir }}/.config/terminator/config"
+    mode: '0644'
+
+# 7. Ensure Neovim config directory exists
+- name: Ensure Neovim config directory exists
+  file:
+    path: "{{ ansible_user_dir }}/.config/nvim"
+    state: directory
+    mode: '0755'
+
+# 8. Copy Neovim init.lua
+- name: Copy Neovim init.lua
+  copy:
+    src: "{{ role_path }}/files/init.lua"
+    dest: "{{ ansible_user_dir }}/.config/nvim/init.lua"
+    mode: '0644'
+
+# 9. Install Neovim plugins using Packer
+- name: Check if Packer is already installed
+  stat:
+    path: "{{ ansible_user_dir }}/.local/share/nvim/site/pack/packer/start/packer.nvim"
+  register: packer_installed
+
+- name: Install Neovim plugins using Packer
+  shell: |
+    nvim +PackerInstall +qall
+  environment:
+    HOME: "{{ ansible_user_dir }}"
+  args:
+    executable: /bin/bash
+  when: packer_installed.stat.exists == false
+
+# 10. Copy tree.sh to /usr/local/bin
+- name: Copy tree.sh to /usr/local/bin
+  copy:
+    src: "{{ role_path }}/files/tree.sh"
+    dest: "/usr/local/bin/tree.sh"
+    mode: '0755' # Make it executable
+  become: true   # Run as sudo
+
+# 11. Create symbolic link for 'vi' to 'nvim'
+- name: Create symbolic link for vi to nvim
+  file:
+    src: "/usr/bin/nvim"  # Path to nvim
+    dest: "/usr/bin/vi"  # Where you want the link to be
+    state: link
+  become: true  # To make sure we have the necessary permissions for /usr/bin
+
