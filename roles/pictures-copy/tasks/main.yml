@@ -1,0 +1,7 @@
+- name: Copy all pictures to ~/Pictures
+  copy:
+    src: "pictures/"
+    dest: "/home/{{ ansible_user_id }}/Pictures/"
+    owner: "{{ ansible_user_id }}"
+    group: "{{ ansible_user_id }}"
+    mode: '0644'

@@ -1,0 +1,32 @@
+- name: Ensure config directory exists
+  file:
+    path: "/home/{{ ansible_user_id }}/.config/gnome-settings"
+    state: directory
+    mode: '0755'
+
+- name: Copy GNOME extensions config file
+  copy:
+    src: extensions.txt
+    dest: "/home/{{ ansible_user_id }}/.config/gnome-settings/extensions.txt"
+    owner: "{{ ansible_user_id }}"
+    group: "{{ ansible_user_id }}"
+    mode: '0644'
+
+- name: Load GNOME extensions config with dconf
+  become: true
+  become_user: "{{ ansible_user_id }}"
+  shell: |
+    dconf load /org/gnome/shell/extensions/ < /home/{{ ansible_user_id }}/.config/gnome-settings/extensions.txt
+  args:
+    executable: /bin/bash
+
+- name: Set desktop background using gsettings with DBus session
+  become: true
+  become_user: "{{ ansible_user_id }}"
+  shell: |
+    export DBUS_SESSION_BUS_ADDRESS="unix:path=/run/user/$(id -u {{ ansible_user_id }})/bus"
+    gsettings set org.gnome.desktop.background picture-uri "file:///home/{{ ansible_user_id }}/Pictures/cyber_girl.jpg"
+    gsettings set org.gnome.desktop.background picture-options "zoom"
+  args:
+    executable: /bin/bash
+

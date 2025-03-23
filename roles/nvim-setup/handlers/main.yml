@@ -1,0 +1,15 @@
+---
+- name: Install Lazy Plugins
+  become: false
+  shell: |
+    nvim --headless "+Lazy! sync" +qa
+  args:
+    executable: /bin/bash
+
+- name: Force TSUpdate for all
+  become: false
+  shell: |
+    nvim --headless "+TSUpdateSync" +qa
+  args:
+    executable: /bin/bash
+

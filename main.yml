@@ -6,5 +6,8 @@
     - role: "tools-installation"
     - role: "terminal-setup"
     - role: "browser-settings"
+    - role: "nvim-setup"
+    - role: "gnome-settings"
+    - role: "pictures-copy"
 #     - role: "logging-setup"
 

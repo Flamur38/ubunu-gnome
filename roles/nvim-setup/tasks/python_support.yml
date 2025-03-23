@@ -1,0 +1,12 @@
+- name: Ensure pip is installed
+  apt:
+    name: python3-pip
+    state: present
+
+- name: Install pynvim and debugpy (for Python LSP/DAP)
+  become: true
+  shell: |
+    pip3 install --break-system-packages pynvim debugpy
+  args:
+    executable: /bin/bash
+    

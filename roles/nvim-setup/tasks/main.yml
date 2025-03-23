@@ -1,0 +1,28 @@
+- import_tasks: install_nvim_deb.yml
+- import_tasks: python_support.yml
+
+- name: Ensure Neovim config directory exists
+  file:
+    path: "/home/{{ ansible_user_id }}/.config/nvim"
+    state: directory
+    recurse: yes
+    mode: '0755'
+
+- name: Copy Neovim config
+  copy:
+    src: "nvim/"
+    dest: "/home/{{ ansible_user_id }}/.config/nvim/"
+    owner: "{{ ansible_user_id }}"
+    group: "{{ ansible_user_id }}"
+    mode: preserve
+  notify: 
+    - Install Lazy Plugins
+    - Force TSUpdate for all
+
+- name: Set Neovim as default editor in /etc/environment
+  lineinfile:
+    path: /etc/environment
+    line: 'EDITOR=nvim'
+    create: yes
+  become: true
+
